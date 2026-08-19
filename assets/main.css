@@ -1,0 +1,240 @@
+:root {
+    --bg: #07080d;
+    --ink: #f4f7fb;
+    --muted: rgba(244, 247, 251, 0.68);
+    --cyan: #5ce1e6;
+    --violet: #8b7cff;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+}
+
+body {
+    font-family: "Outfit", "Segoe UI", sans-serif;
+}
+
+#home {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.bg-nodes {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(rgba(148, 188, 230, 0.22) 1.15px, transparent 1.15px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 72% 58% at 50% 48%, #000 18%, transparent 78%);
+}
+
+.bg-glow {
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(8px);
+}
+
+.bg-glow-cyan {
+    width: min(62vw, 720px);
+    height: min(62vw, 720px);
+    left: 50%;
+    top: 42%;
+    translate: -58% -50%;
+    background: radial-gradient(circle, rgba(92, 225, 230, 0.28), transparent 64%);
+}
+
+.bg-glow-violet {
+    width: min(52vw, 560px);
+    height: min(52vw, 560px);
+    left: 50%;
+    top: 48%;
+    translate: 8% -42%;
+    background: radial-gradient(circle, rgba(139, 124, 255, 0.26), transparent 66%);
+}
+
+.hero {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.25rem 3rem;
+    text-align: center;
+    animation: rise 900ms ease-out both;
+}
+
+.title {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.18em;
+}
+
+.title-small {
+    font-family: "Outfit", sans-serif;
+    font-weight: 300;
+    font-size: clamp(1.35rem, 3.4vw, 2.5rem);
+    letter-spacing: 0.46em;
+    text-indent: 0.46em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.title-main {
+    display: flex;
+    align-items: baseline;
+    font-family: "Syne", sans-serif;
+    font-weight: 800;
+    font-size: clamp(4.4rem, 16vw, 11.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    filter: drop-shadow(0 0 34px rgba(92, 225, 230, 0.22));
+}
+
+.lab,
+.net {
+    background: linear-gradient(118deg, #f3fdff 8%, var(--cyan) 46%, var(--violet) 100%);
+    background-size: 140% 140%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: sheen 8s ease-in-out infinite;
+}
+
+.net {
+    background: linear-gradient(118deg, var(--cyan) 0%, #d9d2ff 48%, var(--violet) 100%);
+    background-size: 140% 140%;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.title-rule {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 1.6rem;
+    width: min(42vw, 22rem);
+}
+
+.title-rule .line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(92, 225, 230, 0.7), rgba(139, 124, 255, 0.7), transparent);
+}
+
+.title-rule .node {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    background: rgba(244, 247, 251, 0.55);
+    box-shadow: 0 0 10px rgba(92, 225, 230, 0.35);
+}
+
+.title-rule .node-accent {
+    width: 0.62rem;
+    height: 0.62rem;
+    background: var(--cyan);
+    box-shadow: 0 0 16px rgba(92, 225, 230, 0.7);
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes sheen {
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.sair {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.2rem;
+    z-index: 2;
+    background: transparent;
+    border: 1px solid rgba(244, 247, 251, 0.22);
+    color: var(--muted);
+    font-family: "Outfit", sans-serif;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.sair:hover {
+    color: var(--ink);
+    border-color: rgba(92, 225, 230, 0.55);
+}
+
+.porta {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem 1.25rem;
+}
+
+.porta-msg {
+    margin: 0;
+    font-family: "Outfit", sans-serif;
+    font-weight: 300;
+    font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+    letter-spacing: 0.06em;
+    color: var(--muted);
+}
+
+.porta-btn {
+    margin-top: 1.4rem;
+    background: transparent;
+    border: 1px solid rgba(92, 225, 230, 0.55);
+    color: var(--cyan);
+    font-family: "Outfit", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.65rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.porta-btn:hover {
+    background: rgba(92, 225, 230, 0.1);
+}
+
+@media (max-width: 640px) {
+    .title-small {
+        letter-spacing: 0.32em;
+        text-indent: 0.32em;
+    }
+
+    .title-rule {
+        width: min(70vw, 16rem);
+    }
+}

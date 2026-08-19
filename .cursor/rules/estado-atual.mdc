@@ -1,0 +1,41 @@
+---
+description: Estado actual do projecto O Meu LabNet e integração LabNetCol (SSO/logout)
+alwaysApply: true
+---
+
+# O Meu LabNet — estado actual (Ago 2026)
+
+## Stack
+- Rust + Dioxus 0.7.9, web, porta dev **8092**
+- Repo: `dio-meu-lab-net` (workspace Cursor actual)
+
+## Fluxo SSO
+1. Sem sessão → redirect LabNetCol `/?p=login&return_to=http://localhost:8092`
+2. Com `?token=` ou `/sso?token=` → valida JWT, guarda `localStorage` (`meu-labnet-sessao`), mostra Home
+3. **Sair** → `a_sair` flag + `limpar_sessao()` + redirect `{portal}/?logout=1` (sem `sessao.set(None)` antes — evita race com PortaRedirect)
+
+## Contrato logout (ecossistema)
+- Canónico: **`/?logout=1`** no portal LabNetCol
+- Legado: `/?p=sair` ainda aceite
+- Portal limpa sessão + `return_to` e mostra Início
+
+## LabNetCol (repo irmão `dio-labnetcol`)
+- `MEU_LABNET_URL` default `http://localhost:8092`
+- Tiles/nav → SSO para Meu LabNet
+- Backend OAuth allowlist inclui `:8092` / `labnet.labnetcol.pt`
+- Dev: rebuild frontend-web + `LABNETCOL_DIST=.../target/dx/dio-labnetcol-web/release/web/public` + `cargo run -p dio-labnetcol-server` em `:8080`
+
+## Setup dev (3 terminais)
+```bash
+# T1 — API LabNetCol :8080
+cd dio-labnetcol && export LABNETCOL_DIST=.../release/web/public && cargo run -p dio-labnetcol-server
+# T2 — Meu LabNet :8092
+cd dio-meu-lab-net && dx serve --port 8092
+```
+
+## UI actual
+- Landing/Home mínima pós-login (título + botão Sair)
+- Estilo escuro, Outfit + Syne
+
+## Próximo passo acordado
+- **Painel gerível pelo utilizador** — página pessoal no LabNet (ver conversa produto)
