@@ -1,0 +1,24 @@
+[package]
+name = "dio-meu-lab-net-server"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "meu_labnet_serv"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+log = "0.4"
+simple_logger = "5"
+dotenvy = "0.15"
+axum = "0.8"
+tower-http = { version = "0.6", features = ["cors"] }
+jsonwebtoken = "9"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+bytemuck = { version = "1", features = ["derive"] }
+mcs_bd2 = { path = "../../mcs_bd2" }
+meu_labnet_comum = { path = "../meu_labnet_comum" }

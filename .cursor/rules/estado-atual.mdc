@@ -1,41 +1,63 @@
 ---
-description: Estado actual do projecto O Meu LabNet e integração LabNetCol (SSO/logout)
+description: Estado actual do projecto O Meu LabNet e integração LabNetCol (SSO/logout/BD)
 alwaysApply: true
 ---
 
 # O Meu LabNet — estado actual (Ago 2026)
 
 ## Stack
-- Rust + Dioxus 0.7.9, web, porta dev **8092**
-- Repo: `dio-meu-lab-net` (workspace Cursor actual)
+- Rust + Dioxus 0.7.9 (frontend) + Axum (API) + **mcs_bd2**
+- Frontend dev: **8092** | API: **8093**
+- Repo: https://github.com/ManuelCarvalhoS/dio-meu-lab-net
 
-## Fluxo SSO
-1. Sem sessão → redirect LabNetCol `/?p=login&return_to=http://localhost:8092`
-2. Com `?token=` ou `/sso?token=` → valida JWT, guarda `localStorage` (`meu-labnet-sessao`), mostra Home
-3. **Sair** → `a_sair` flag + `limpar_sessao()` + redirect `{portal}/?logout=1` (sem `sessao.set(None)` antes — evita race com PortaRedirect)
+## Arquitectura
+```
+meu_labnet_comum/   — structs Pod + DTOs (painel, widget)
+server/             — meu_labnet_serv (Axum + mcs_bd2)
+src/                — frontend Dioxus
+```
 
-## Contrato logout (ecossistema)
-- Canónico: **`/?logout=1`** no portal LabNetCol
-- Legado: `/?p=sair` ainda aceite
-- Portal limpa sessão + `return_to` e mostra Início
+## BD mcs_bd2 (`MEU_LABNET_DATA_DIR`, default `./data`)
+| Entidade | Conteúdo |
+|----------|----------|
+| `painel` | Preferências por utilizador (tema, colunas 1–3) |
+| `widget` | Atalhos / links / notas por utilizador (índice i1 em `utilizador`) |
 
-## LabNetCol (repo irmão `dio-labnetcol`)
-- `MEU_LABNET_URL` default `http://localhost:8092`
-- Tiles/nav → SSO para Meu LabNet
-- Backend OAuth allowlist inclui `:8092` / `labnet.labnetcol.pt`
-- Dev: rebuild frontend-web + `LABNETCOL_DIST=.../target/dx/dio-labnetcol-web/release/web/public` + `cargo run -p dio-labnetcol-server` em `:8080`
+## API
+- `POST /api/sso/labnetcol` — JWT LabNetCol → token app
+- `GET /api/painel` — config + widgets (atalhos iniciais auto na 1.ª visita)
+- `GET /api/live/{slug}` — resumo live (lista/agenda/encripta/labnetcol)
+- `PUT /api/painel/config` | `POST/DELETE /api/widgets` | `PUT /api/widgets/reordenar`
 
-## Setup dev (3 terminais)
+## SSO / logout
+- Entrada: LabNetCol `/?p=login&return_to=http://localhost:8092`
+- Sair: `/?logout=1` (flag `a_sair`, sem race PortaRedirect)
+- `LABNETCOL_SECRET` igual ao LabNetCol
+
+## Dev (3 terminais)
 ```bash
-# T1 — API LabNetCol :8080
-cd dio-labnetcol && export LABNETCOL_DIST=.../release/web/public && cargo run -p dio-labnetcol-server
-# T2 — Meu LabNet :8092
-cd dio-meu-lab-net && dx serve --port 8092
+# LabNetCol :8080
+# API Meu LabNet :8093
+cd server && MEU_LABNET_DATA_DIR=../data cargo run -p dio-meu-lab-net-server
+# UI :8092
+dx serve --port 8092
 ```
 
 ## UI actual
-- Landing/Home mínima pós-login (título + botão Sair)
-- Estilo escuro, Outfit + Syne
+Painel 3 colunas: Atalhos | Links | Notas + adicionar + preferências.
+- Tema claro/escuro persistente (`painel.tema`)
+- Reordenar widgets: drag-and-drop + ↑↓
+- **Widgets live:** atalhos mostram resumo via `GET /api/live/{slug}` (Lista totais, Agenda mês, Encripta ping)
 
-## Próximo passo acordado
-- **Painel gerível pelo utilizador** — página pessoal no LabNet (ver conversa produto)
+## Env live (server)
+```
+LISTA_URL=http://127.0.0.1:8088
+LISTA_JWT_SECRET=lista-jwt-dev
+AGENDA_URL=http://127.0.0.1:8091
+AGENDA_JWT_SECRET=agenda-jwt-dev
+ENCRIPTA_URL=http://127.0.0.1:8090
+```
+
+## Próximo
+- Edição inline de links/notas
+- Encripta: contagem real de snapshots (quando houver JWT peer)

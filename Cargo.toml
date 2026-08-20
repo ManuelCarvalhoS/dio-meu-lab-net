@@ -1,19 +1,22 @@
+[workspace]
+resolver = "2"
+members = ["meu_labnet_comum", "server"]
+
 [package]
 name = "dio-meu-lab-net"
 version = "0.1.0"
 authors = ["prof Fernando <proffernandosilva@aescolasmmcartaxo.pt>"]
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 dioxus = { version = "=0.7.9", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-base64 = "0.22"
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+meu_labnet_comum = { path = "meu_labnet_comum" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-web-sys = { version = "0.3", features = ["Storage", "Window", "Location", "History"] }
+web-sys = { version = "0.3", features = ["Storage", "Window", "Location", "History", "Document", "Element"] }
 js-sys = "0.3"
 wasm-bindgen = "0.2"
 
